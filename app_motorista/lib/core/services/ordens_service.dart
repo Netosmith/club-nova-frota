@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../shared/models/ordem_model.dart';
+import '../constants/firestore_collections.dart';
 import 'firestore_service.dart';
 
 class OrdensService {
@@ -11,7 +12,7 @@ class OrdensService {
 
   Stream<List<OrdemModel>> listarOrdensDoMotorista(String motoristaId) {
     return _firestoreService
-        .collection('ordens')
+        .collection(FirestoreCollections.ordens)
         .where('motoristaId', isEqualTo: motoristaId)
         .snapshots()
         .map(_mapOrdens);
@@ -22,7 +23,7 @@ class OrdensService {
     required String freteId,
   }) {
     return _firestoreService.addDocument(
-      collectionPath: 'ordens',
+      collectionPath: FirestoreCollections.ordens,
       data: {
         'motoristaId': motoristaId,
         'freteId': freteId,
