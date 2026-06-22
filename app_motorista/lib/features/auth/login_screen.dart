@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../core/providers/auth_provider.dart';
 import '../../core/routes/app_routes.dart';
-import '../../core/services/auth_service.dart';
 import '../../core/theme/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,9 +15,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
-  final _authService = AuthService();
-
-  bool _carregando = false;
 
   @override
   void dispose() {
@@ -26,43 +24,40 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _entrarComEmailSenha() async {
-    setState(() => _carregando = true);
+    final authProvider = context.read<AuthProvider>();
 
-    try {
-      await _authService.entrarComEmailSenha(
-        email: _emailController.text.trim(),
-        senha: _senhaController.text.trim(),
-      );
+    final sucesso = await authProvider.entrarComEmailSenha(
+      email: _emailController.text.trim(),
+      senha: _senhaController.text.trim(),
+    );
 
-      if (!mounted) return;
+    if (!mounted) return;
+
+    if (sucesso) {
       Navigator.pushReplacementNamed(context, AppRoutes.main);
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível entrar. Verifique seus dados.')),
-      );
-    } finally {
-      if (mounted) setState(() => _carregando = false);
+      return;
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(authProvider.erro ?? 'Não foi possível entrar.')),
+    );
   }
 
   Future<void> _entrarComGoogle() async {
-    setState(() => _carregando = true);
+    final authProvider = context.read<AuthProvider>();
 
-    try {
-      final result = await _authService.entrarComGoogle();
-      if (result == null) return;
+    final sucesso = await authProvider.entrarComGoogle();
 
-      if (!mounted) return;
+    if (!mounted) return;
+
+    if (sucesso) {
       Navigator.pushReplacementNamed(context, AppRoutes.main);
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível entrar com Google.')),
-      );
-    } finally {
-      if (mounted) setState(() => _carregando = false);
+      return;
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(authProvider.erro ?? 'Não foi possível entrar com Google.')),
+    );
   }
 
   Future<void> _recuperarSenha() async {
@@ -75,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    await _authService.enviarRecuperacaoSenha(email);
+    await context.read<AuthProvider>().recuperarSenha(email);
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final carregando = context.watch<AuthProvider>().carregando;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -139,18 +136,18 @@ class _LoginScreenState extends State<LoginScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: _carregando ? null : _recuperarSenha,
+                  onPressed: carregando ? null : _recuperarSenha,
                   child: const Text('Esqueci minha senha'),
                 ),
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _carregando ? null : _entrarComEmailSenha,
-                child: Text(_carregando ? 'Entrando...' : 'Entrar'),
+                onPressed: carregando ? null : _entrarComEmailSenha,
+                child: Text(carregando ? 'Entrando...' : 'Entrar'),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: _carregando ? null : _entrarComGoogle,
+                onPressed: carregando ? null : _entrarComGoogle,
                 child: const Text('Entrar com Google'),
               ),
               const Spacer(),
