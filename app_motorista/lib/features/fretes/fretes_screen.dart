@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/providers/auth_provider.dart';
 import '../../core/providers/fretes_provider.dart';
+import '../../core/providers/ordens_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/models/frete_model.dart';
 import '../../shared/utils/formatters.dart';
@@ -95,8 +97,38 @@ class _FreteCard extends StatelessWidget {
 
   final FreteModel frete;
 
+  Future<void> _solicitarOrdem(BuildContext context) async {
+    final usuario = context.read<AuthProvider>().usuario;
+
+    if (usuario == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Faça login novamente para solicitar ordem.')),
+      );
+      return;
+    }
+
+    final sucesso = await context.read<OrdensProvider>().solicitarOrdem(
+          motoristaId: usuario.uid,
+          freteId: frete.id,
+        );
+
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          sucesso
+              ? 'Ordem solicitada com sucesso.'
+              : 'Não foi possível solicitar a ordem.',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final solicitando = context.watch<OrdensProvider>().carregando;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 14),
       child: Padding(
@@ -119,8 +151,8 @@ class _FreteCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Solicitar Ordem'),
+                onPressed: solicitando ? null : () => _solicitarOrdem(context),
+                child: Text(solicitando ? 'Solicitando...' : 'Solicitar Ordem'),
               ),
             ),
           ],
