@@ -1,4 +1,5 @@
 import '../../shared/models/motorista_model.dart';
+import '../constants/firestore_collections.dart';
 import 'firestore_service.dart';
 
 class MotoristasService {
@@ -9,7 +10,7 @@ class MotoristasService {
 
   Future<MotoristaModel?> buscarMotorista(String motoristaId) async {
     final doc = await _firestoreService.getDocument(
-      collectionPath: 'motoristas',
+      collectionPath: FirestoreCollections.motoristas,
       documentId: motoristaId,
     );
 
