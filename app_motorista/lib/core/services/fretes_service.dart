@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../shared/models/frete_model.dart';
+import '../constants/firestore_collections.dart';
 import 'firestore_service.dart';
 
 class FretesService {
@@ -11,7 +12,7 @@ class FretesService {
 
   Stream<List<FreteModel>> listarFretesDisponiveis() {
     return _firestoreService
-        .collection('fretes')
+        .collection(FirestoreCollections.fretes)
         .where('status', isEqualTo: 'disponivel')
         .snapshots()
         .map(_mapFretes);
