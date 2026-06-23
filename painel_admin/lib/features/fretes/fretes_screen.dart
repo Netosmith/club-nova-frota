@@ -29,7 +29,7 @@ class _FretesScreenState extends State<FretesScreen> {
   Future<void> _abrirFormularioNovoFrete() async {
     await showDialog<void>(
       context: context,
-      builder: (_) => const _NovoFreteDialog(),
+      builder: (_) => const _FreteDialog(),
     );
   }
 
@@ -141,7 +141,10 @@ class _FretesContent extends StatelessWidget {
             children: [
               IconButton(
                 tooltip: 'Editar',
-                onPressed: () {},
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (_) => _FreteDialog(frete: frete),
+                ),
                 icon: const Icon(Icons.edit),
               ),
               IconButton(
@@ -186,14 +189,16 @@ class _FretesContent extends StatelessWidget {
   }
 }
 
-class _NovoFreteDialog extends StatefulWidget {
-  const _NovoFreteDialog();
+class _FreteDialog extends StatefulWidget {
+  const _FreteDialog({this.frete});
+
+  final FreteAdminModel? frete;
 
   @override
-  State<_NovoFreteDialog> createState() => _NovoFreteDialogState();
+  State<_FreteDialog> createState() => _FreteDialogState();
 }
 
-class _NovoFreteDialogState extends State<_NovoFreteDialog> {
+class _FreteDialogState extends State<_FreteDialog> {
   final _formKey = GlobalKey<FormState>();
   final _clienteController = TextEditingController();
   final _origemController = TextEditingController();
@@ -203,6 +208,25 @@ class _NovoFreteDialogState extends State<_NovoFreteDialog> {
   final _pesoController = TextEditingController();
   final _dataController = TextEditingController();
   final _observacoesController = TextEditingController();
+
+  bool get _editando => widget.frete != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final frete = widget.frete;
+    if (frete != null) {
+      _clienteController.text = frete.cliente;
+      _origemController.text = frete.origem;
+      _destinoController.text = frete.destino;
+      _produtoController.text = frete.produto;
+      _valorController.text = frete.valor.toStringAsFixed(2);
+      _pesoController.text = frete.pesoEstimado.toStringAsFixed(2);
+      _dataController.text = frete.dataCarregamento;
+      _observacoesController.text = frete.observacoes;
+    }
+  }
 
   @override
   void dispose() {
@@ -220,8 +244,10 @@ class _NovoFreteDialogState extends State<_NovoFreteDialog> {
   Future<void> _salvar() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final freteAtual = widget.frete;
+
     final frete = FreteAdminModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: freteAtual?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       cliente: _clienteController.text.trim(),
       origem: _origemController.text.trim(),
       destino: _destinoController.text.trim(),
@@ -230,8 +256,8 @@ class _NovoFreteDialogState extends State<_NovoFreteDialog> {
       pesoEstimado: double.tryParse(_pesoController.text.replaceAll(',', '.')) ?? 0,
       dataCarregamento: _dataController.text.trim(),
       observacoes: _observacoesController.text.trim(),
-      status: 'rascunho',
-      criadoPor: 'admin',
+      status: freteAtual?.status ?? 'rascunho',
+      criadoPor: freteAtual?.criadoPor ?? 'admin',
     );
 
     final sucesso = await context.read<AdminFretesProvider>().salvarFrete(frete);
@@ -241,13 +267,19 @@ class _NovoFreteDialogState extends State<_NovoFreteDialog> {
     if (sucesso) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Frete cadastrado com sucesso.')),
+        SnackBar(
+          content: Text(
+            _editando
+                ? 'Frete atualizado com sucesso.'
+                : 'Frete cadastrado com sucesso.',
+          ),
+        ),
       );
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Não foi possível cadastrar o frete.')),
+      const SnackBar(content: Text('Não foi possível salvar o frete.')),
     );
   }
 
@@ -256,7 +288,7 @@ class _NovoFreteDialogState extends State<_NovoFreteDialog> {
     final carregando = context.watch<AdminFretesProvider>().carregando;
 
     return AlertDialog(
-      title: const Text('Novo Frete'),
+      title: Text(_editando ? 'Editar Frete' : 'Novo Frete'),
       content: SizedBox(
         width: 620,
         child: Form(
