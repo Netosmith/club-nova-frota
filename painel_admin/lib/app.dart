@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'core/providers/admin_auth_provider.dart';
 import 'core/providers/admin_comprovantes_provider.dart';
 import 'core/providers/admin_fretes_provider.dart';
 import 'core/providers/admin_motoristas_provider.dart';
@@ -15,6 +16,7 @@ class PainelAdminApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AdminAuthProvider()..iniciar()),
         ChangeNotifierProvider(create: (_) => AdminMotoristasProvider()),
         ChangeNotifierProvider(create: (_) => AdminFretesProvider()),
         ChangeNotifierProvider(create: (_) => AdminOrdensProvider()),
@@ -25,7 +27,7 @@ class PainelAdminApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AdminTheme.light,
         routes: AdminRoutes.routes,
-        initialRoute: AdminRoutes.dashboard,
+        initialRoute: AdminRoutes.login,
       ),
     );
   }
