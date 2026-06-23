@@ -7,7 +7,9 @@ import 'package:provider/provider.dart';
 
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/comprovantes_provider.dart';
+import '../../core/providers/ordens_provider.dart';
 import '../../core/theme/app_colors.dart';
+import '../../shared/models/ordem_model.dart';
 
 class ComprovantesScreen extends StatefulWidget {
   const ComprovantesScreen({super.key});
@@ -17,13 +19,21 @@ class ComprovantesScreen extends StatefulWidget {
 }
 
 class _ComprovantesScreenState extends State<ComprovantesScreen> {
-  final _ordemController = TextEditingController();
   final _imagePicker = ImagePicker();
+  OrdemModel? _ordemSelecionada;
+  bool _ordensIniciadas = false;
 
   @override
-  void dispose() {
-    _ordemController.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_ordensIniciadas) {
+      final usuario = context.read<AuthProvider>().usuario;
+      if (usuario != null) {
+        context.read<OrdensProvider>().acompanharOrdensDoMotorista(usuario.uid);
+      }
+      _ordensIniciadas = true;
+    }
   }
 
   Future<void> _enviarFoto() async {
@@ -56,12 +66,11 @@ class _ComprovantesScreenState extends State<ComprovantesScreen> {
     required File arquivo,
     required String nomeArquivo,
   }) async {
-    final ordemId = _ordemController.text.trim();
     final usuario = context.read<AuthProvider>().usuario;
 
-    if (ordemId.isEmpty) {
+    if (_ordemSelecionada == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Informe o ID da ordem.')),
+        const SnackBar(content: Text('Selecione uma ordem para enviar o comprovante.')),
       );
       return;
     }
@@ -76,7 +85,7 @@ class _ComprovantesScreenState extends State<ComprovantesScreen> {
     final sucesso = await context.read<ComprovantesProvider>().enviarComprovante(
           arquivo: arquivo,
           motoristaId: usuario.uid,
-          ordemId: ordemId,
+          ordemId: _ordemSelecionada!.id,
           nomeArquivo: nomeArquivo,
         );
 
@@ -96,92 +105,146 @@ class _ComprovantesScreenState extends State<ComprovantesScreen> {
   @override
   Widget build(BuildContext context) {
     final comprovantesProvider = context.watch<ComprovantesProvider>();
+    final ordensProvider = context.watch<OrdensProvider>();
     final carregando = comprovantesProvider.carregando;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Anexar Comprovante')),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Card(
-              child: Padding(
-                padding: EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Envio de documentos',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Anexe o comprovante de descarga, canhoto ou PDF da viagem.',
-                      style: TextStyle(color: AppColors.cinzaTexto),
-                    ),
-                  ],
-                ),
+        children: [
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Envio de documentos',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Selecione uma ordem e anexe o comprovante de descarga, canhoto ou PDF da viagem.',
+                    style: TextStyle(color: AppColors.cinzaTexto),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _ordemController,
-              decoration: const InputDecoration(
-                labelText: 'ID da ordem',
-                border: OutlineInputBorder(),
+          ),
+          const SizedBox(height: 16),
+          _SelecionarOrdemCard(
+            ordens: ordensProvider.ordens,
+            carregando: ordensProvider.carregando,
+            ordemSelecionada: _ordemSelecionada,
+            onChanged: (ordem) {
+              setState(() {
+                _ordemSelecionada = ordem;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: carregando ? null : _enviarFoto,
+            icon: const Icon(Icons.camera_alt),
+            label: Text(carregando ? 'Enviando...' : 'Enviar Foto'),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: carregando ? null : _enviarPdf,
+            icon: const Icon(Icons.picture_as_pdf),
+            label: const Text('Enviar PDF'),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Histórico',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: ListTile(
+              leading: Icon(
+                comprovantesProvider.ultimoArquivoUrl == null
+                    ? Icons.info_outline
+                    : Icons.check_circle,
+                color: comprovantesProvider.ultimoArquivoUrl == null
+                    ? AppColors.azulPrincipal
+                    : AppColors.verdePrincipal,
+              ),
+              title: Text(
+                comprovantesProvider.ultimoArquivoUrl == null
+                    ? 'Nenhum comprovante enviado nesta sessão'
+                    : 'Último comprovante enviado',
+              ),
+              subtitle: Text(
+                comprovantesProvider.ultimoArquivoUrl == null
+                    ? 'Os envios aparecerão aqui.'
+                    : comprovantesProvider.ultimoArquivoUrl!,
               ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: carregando ? null : _enviarFoto,
-              icon: const Icon(Icons.camera_alt),
-              label: Text(carregando ? 'Enviando...' : 'Enviar Foto'),
-            ),
+          ),
+          if (comprovantesProvider.erro != null) ...[
             const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: carregando ? null : _enviarPdf,
-              icon: const Icon(Icons.picture_as_pdf),
-              label: const Text('Enviar PDF'),
+            Text(
+              comprovantesProvider.erro!,
+              style: const TextStyle(color: Colors.red),
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'Histórico',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 8),
-            Card(
-              child: ListTile(
-                leading: Icon(
-                  comprovantesProvider.ultimoArquivoUrl == null
-                      ? Icons.info_outline
-                      : Icons.check_circle,
-                  color: comprovantesProvider.ultimoArquivoUrl == null
-                      ? AppColors.azulPrincipal
-                      : AppColors.verdePrincipal,
-                ),
-                title: Text(
-                  comprovantesProvider.ultimoArquivoUrl == null
-                      ? 'Nenhum comprovante enviado nesta sessão'
-                      : 'Último comprovante enviado',
-                ),
-                subtitle: Text(
-                  comprovantesProvider.ultimoArquivoUrl == null
-                      ? 'Os envios aparecerão aqui.'
-                      : comprovantesProvider.ultimoArquivoUrl!,
-                ),
-              ),
-            ),
-            if (comprovantesProvider.erro != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                comprovantesProvider.erro!,
-                style: const TextStyle(color: Colors.red),
-              ),
-            ],
           ],
-        ),
+        ],
       ),
+    );
+  }
+}
+
+class _SelecionarOrdemCard extends StatelessWidget {
+  const _SelecionarOrdemCard({
+    required this.ordens,
+    required this.carregando,
+    required this.ordemSelecionada,
+    required this.onChanged,
+  });
+
+  final List<OrdemModel> ordens;
+  final bool carregando;
+  final OrdemModel? ordemSelecionada;
+  final ValueChanged<OrdemModel?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    if (carregando) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(18),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+
+    if (ordens.isEmpty) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(18),
+          child: Text(
+            'Nenhuma ordem disponível para anexar comprovante.',
+            style: TextStyle(color: AppColors.cinzaTexto),
+          ),
+        ),
+      );
+    }
+
+    return DropdownButtonFormField<OrdemModel>(
+      value: ordemSelecionada,
+      decoration: const InputDecoration(
+        labelText: 'Selecionar ordem',
+        border: OutlineInputBorder(),
+      ),
+      items: ordens.map((ordem) {
+        return DropdownMenuItem<OrdemModel>(
+          value: ordem,
+          child: Text('Ordem ${ordem.id} - ${ordem.status}'),
+        );
+      }).toList(),
+      onChanged: onChanged,
     );
   }
 }
