@@ -29,7 +29,7 @@ class _MotoristasScreenState extends State<MotoristasScreen> {
   Future<void> _abrirFormularioNovoMotorista() async {
     await showDialog<void>(
       context: context,
-      builder: (_) => const _NovoMotoristaDialog(),
+      builder: (_) => const _MotoristaDialog(),
     );
   }
 
@@ -143,7 +143,10 @@ class _MotoristasContent extends StatelessWidget {
             children: [
               IconButton(
                 tooltip: 'Editar',
-                onPressed: () {},
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (_) => _MotoristaDialog(motorista: motorista),
+                ),
                 icon: const Icon(Icons.edit),
               ),
               IconButton(
@@ -166,14 +169,16 @@ class _MotoristasContent extends StatelessWidget {
   }
 }
 
-class _NovoMotoristaDialog extends StatefulWidget {
-  const _NovoMotoristaDialog();
+class _MotoristaDialog extends StatefulWidget {
+  const _MotoristaDialog({this.motorista});
+
+  final MotoristaAdminModel? motorista;
 
   @override
-  State<_NovoMotoristaDialog> createState() => _NovoMotoristaDialogState();
+  State<_MotoristaDialog> createState() => _MotoristaDialogState();
 }
 
-class _NovoMotoristaDialogState extends State<_NovoMotoristaDialog> {
+class _MotoristaDialogState extends State<_MotoristaDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
   final _cpfController = TextEditingController();
@@ -183,6 +188,25 @@ class _NovoMotoristaDialogState extends State<_NovoMotoristaDialog> {
   final _categoriaController = TextEditingController();
   final _cidadeController = TextEditingController();
   final _ufController = TextEditingController();
+
+  bool get _editando => widget.motorista != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final motorista = widget.motorista;
+    if (motorista != null) {
+      _nomeController.text = motorista.nome;
+      _cpfController.text = motorista.cpf;
+      _telefoneController.text = motorista.telefone;
+      _emailController.text = motorista.email;
+      _placaController.text = motorista.placa;
+      _categoriaController.text = motorista.categoria;
+      _cidadeController.text = motorista.cidade;
+      _ufController.text = motorista.uf;
+    }
+  }
 
   @override
   void dispose() {
@@ -200,11 +224,12 @@ class _NovoMotoristaDialogState extends State<_NovoMotoristaDialog> {
   Future<void> _salvar() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    final motoristaAtual = widget.motorista;
+    final id = motoristaAtual?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
     final motorista = MotoristaAdminModel(
       id: id,
-      usuarioId: id,
+      usuarioId: motoristaAtual?.usuarioId ?? id,
       nome: _nomeController.text.trim(),
       cpf: _cpfController.text.trim(),
       telefone: _telefoneController.text.trim(),
@@ -213,9 +238,9 @@ class _NovoMotoristaDialogState extends State<_NovoMotoristaDialog> {
       categoria: _categoriaController.text.trim(),
       cidade: _cidadeController.text.trim(),
       uf: _ufController.text.trim().toUpperCase(),
-      ativo: true,
-      pontos: 0,
-      medalha: 'bronze',
+      ativo: motoristaAtual?.ativo ?? true,
+      pontos: motoristaAtual?.pontos ?? 0,
+      medalha: motoristaAtual?.medalha ?? 'bronze',
     );
 
     final sucesso = await context
@@ -227,13 +252,19 @@ class _NovoMotoristaDialogState extends State<_NovoMotoristaDialog> {
     if (sucesso) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Motorista cadastrado com sucesso.')),
+        SnackBar(
+          content: Text(
+            _editando
+                ? 'Motorista atualizado com sucesso.'
+                : 'Motorista cadastrado com sucesso.',
+          ),
+        ),
       );
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Não foi possível cadastrar o motorista.')),
+      const SnackBar(content: Text('Não foi possível salvar o motorista.')),
     );
   }
 
@@ -242,7 +273,7 @@ class _NovoMotoristaDialogState extends State<_NovoMotoristaDialog> {
     final carregando = context.watch<AdminMotoristasProvider>().carregando;
 
     return AlertDialog(
-      title: const Text('Novo Motorista'),
+      title: Text(_editando ? 'Editar Motorista' : 'Novo Motorista'),
       content: SizedBox(
         width: 620,
         child: Form(
