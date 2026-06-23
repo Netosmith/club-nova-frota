@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'admin_auth_guard.dart';
 import 'admin_sidebar.dart';
 
 class AdminLayout extends StatelessWidget {
@@ -14,20 +15,22 @@ class AdminLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          const AdminSidebar(),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppBar(title: Text(title)),
-                Expanded(child: child),
-              ],
+    return AdminAuthGuard(
+      child: Scaffold(
+        body: Row(
+          children: [
+            const AdminSidebar(),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppBar(title: Text(title)),
+                  Expanded(child: child),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
