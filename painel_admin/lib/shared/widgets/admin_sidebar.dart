@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../core/providers/admin_auth_provider.dart';
 import '../../core/routes/admin_routes.dart';
 import '../../core/theme/admin_colors.dart';
 
 class AdminSidebar extends StatelessWidget {
   const AdminSidebar({super.key});
 
+  Future<void> _sair(BuildContext context) async {
+    await context.read<AdminAuthProvider>().sair();
+
+    if (!context.mounted) return;
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AdminRoutes.login,
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final usuario = context.watch<AdminAuthProvider>().usuario;
+
     return Container(
       width: 260,
       color: AdminColors.azulPrincipal,
@@ -15,12 +31,12 @@ class AdminSidebar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(20),
+            Padding(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'CLUB NOVA FROTA',
                     style: TextStyle(
                       color: AdminColors.branco,
@@ -28,11 +44,19 @@ class AdminSidebar extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Text(
+                  const SizedBox(height: 4),
+                  const Text(
                     'Painel Administrativo',
                     style: TextStyle(color: Colors.white70),
                   ),
+                  if (usuario?.email != null) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      usuario!.email!,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -62,6 +86,14 @@ class AdminSidebar extends StatelessWidget {
               route: AdminRoutes.comprovantes,
             ),
             const Spacer(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: AdminColors.branco),
+              title: const Text(
+                'Sair',
+                style: TextStyle(color: AdminColors.branco),
+              ),
+              onTap: () => _sair(context),
+            ),
             const Padding(
               padding: EdgeInsets.all(20),
               child: Text(
