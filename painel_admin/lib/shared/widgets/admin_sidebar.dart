@@ -86,6 +86,11 @@ class AdminSidebar extends StatelessWidget {
               route: AdminRoutes.comprovantes,
             ),
             _MenuItem(
+              icon: Icons.stars,
+              label: 'Pontos',
+              route: AdminRoutes.pontos,
+            ),
+            _MenuItem(
               icon: Icons.emoji_events,
               label: 'Ranking',
               route: AdminRoutes.ranking,
