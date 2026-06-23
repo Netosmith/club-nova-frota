@@ -6,6 +6,7 @@ import 'core/providers/admin_comprovantes_provider.dart';
 import 'core/providers/admin_fretes_provider.dart';
 import 'core/providers/admin_motoristas_provider.dart';
 import 'core/providers/admin_ordens_provider.dart';
+import 'core/providers/admin_ranking_provider.dart';
 import 'core/providers/admin_usuarios_provider.dart';
 import 'core/routes/admin_routes.dart';
 import 'core/theme/admin_theme.dart';
@@ -22,6 +23,7 @@ class PainelAdminApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AdminFretesProvider()),
         ChangeNotifierProvider(create: (_) => AdminOrdensProvider()),
         ChangeNotifierProvider(create: (_) => AdminComprovantesProvider()),
+        ChangeNotifierProvider(create: (_) => AdminRankingProvider()),
         ChangeNotifierProvider(create: (_) => AdminUsuariosProvider()),
       ],
       child: MaterialApp(
