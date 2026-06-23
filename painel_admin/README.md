@@ -1,34 +1,68 @@
 # Painel Administrativo - Club Nova Frota
 
-Painel web para a equipe operacional, comercial e financeira gerenciar o Club Nova Frota.
-
 ## Objetivo
 
-Permitir que a equipe Nova Frota cadastre e gerencie motoristas, fretes, ordens, comprovantes, pontos e usuários internos.
+Painel web para controle operacional do Club Nova Frota.
 
-## Módulos previstos no MVP
+Será utilizado pela equipe Nova Frota para gerenciar:
+
+- Motoristas
+- Fretes
+- Ordens
+- Comprovantes
+- Pontos
+- Ranking
+- Benefícios
+- Notificações
+- Configurações
+
+---
+
+# Tecnologia Prevista
+
+- Flutter Web
+- Firebase Auth
+- Firestore
+- Firebase Storage
+- Provider
+
+---
+
+# Estrutura Inicial
+
+```text
+painel_admin/
+├── lib/
+│   ├── core/
+│   ├── features/
+│   ├── shared/
+│   ├── app.dart
+│   └── main.dart
+└── pubspec.yaml
+```
+
+---
+
+# Fase 1
 
 - Login administrativo
+- Dashboard
 - Cadastro de motoristas
 - Cadastro de fretes
 - Gestão de ordens
-- Aprovação de comprovantes
-- Gestão de usuários
+- Análise de comprovantes
 
-## Perfis de acesso
+---
+
+# Perfis de Acesso
 
 - admin
+- coordenador
 - operacional
 - comercial
 - financeiro
 
-## Tecnologia prevista
+---
 
-- Web app
-- Firebase Authentication
-- Cloud Firestore
-- Firebase Storage
-
-## Status
-
-Planejamento e arquitetura em andamento.
+Status: Estrutura inicial criada
+Projeto: Club Nova Frota
