@@ -24,6 +24,10 @@ class AdminAuthRepository {
     );
   }
 
+  Future<Map<String, dynamic>?> buscarPerfilUsuario(String usuarioId) {
+    return _authService.buscarPerfilUsuario(usuarioId);
+  }
+
   Future<void> sair() {
     return _authService.sair();
   }
