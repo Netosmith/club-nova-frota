@@ -85,6 +85,11 @@ class AdminSidebar extends StatelessWidget {
               label: 'Comprovantes',
               route: AdminRoutes.comprovantes,
             ),
+            _MenuItem(
+              icon: Icons.settings,
+              label: 'Configurações',
+              route: AdminRoutes.configuracoes,
+            ),
             const Spacer(),
             ListTile(
               leading: const Icon(Icons.logout, color: AdminColors.branco),
