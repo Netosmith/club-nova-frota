@@ -26,6 +26,13 @@ class _MotoristasScreenState extends State<MotoristasScreen> {
     }
   }
 
+  Future<void> _abrirFormularioNovoMotorista() async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) => const _NovoMotoristaDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AdminMotoristasProvider>();
@@ -50,7 +57,7 @@ class _MotoristasScreenState extends State<MotoristasScreen> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: _abrirFormularioNovoMotorista,
                   icon: const Icon(Icons.add),
                   label: const Text('Novo Motorista'),
                 ),
@@ -96,6 +103,7 @@ class _MotoristasContent extends StatelessWidget {
 
     return Card(
       child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: const [
             DataColumn(label: Text('Nome')),
@@ -154,6 +162,157 @@ class _MotoristasContent extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _NovoMotoristaDialog extends StatefulWidget {
+  const _NovoMotoristaDialog();
+
+  @override
+  State<_NovoMotoristaDialog> createState() => _NovoMotoristaDialogState();
+}
+
+class _NovoMotoristaDialogState extends State<_NovoMotoristaDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _nomeController = TextEditingController();
+  final _cpfController = TextEditingController();
+  final _telefoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _placaController = TextEditingController();
+  final _categoriaController = TextEditingController();
+  final _cidadeController = TextEditingController();
+  final _ufController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _cpfController.dispose();
+    _telefoneController.dispose();
+    _emailController.dispose();
+    _placaController.dispose();
+    _categoriaController.dispose();
+    _cidadeController.dispose();
+    _ufController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _salvar() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+
+    final motorista = MotoristaAdminModel(
+      id: id,
+      usuarioId: id,
+      nome: _nomeController.text.trim(),
+      cpf: _cpfController.text.trim(),
+      telefone: _telefoneController.text.trim(),
+      email: _emailController.text.trim(),
+      placa: _placaController.text.trim().toUpperCase(),
+      categoria: _categoriaController.text.trim(),
+      cidade: _cidadeController.text.trim(),
+      uf: _ufController.text.trim().toUpperCase(),
+      ativo: true,
+      pontos: 0,
+      medalha: 'bronze',
+    );
+
+    final sucesso = await context
+        .read<AdminMotoristasProvider>()
+        .salvarMotorista(motorista);
+
+    if (!mounted) return;
+
+    if (sucesso) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Motorista cadastrado com sucesso.')),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Não foi possível cadastrar o motorista.')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final carregando = context.watch<AdminMotoristasProvider>().carregando;
+
+    return AlertDialog(
+      title: const Text('Novo Motorista'),
+      content: SizedBox(
+        width: 620,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _campoObrigatorio(_nomeController, 'Nome'),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _campoObrigatorio(_cpfController, 'CPF')),
+                    const SizedBox(width: 12),
+                    Expanded(child: _campoObrigatorio(_telefoneController, 'Telefone')),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _campoObrigatorio(_emailController, 'E-mail'),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _campoObrigatorio(_placaController, 'Placa')),
+                    const SizedBox(width: 12),
+                    Expanded(child: _campoObrigatorio(_categoriaController, 'Categoria')),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _campoObrigatorio(_cidadeController, 'Cidade')),
+                    const SizedBox(width: 12),
+                    SizedBox(width: 120, child: _campoObrigatorio(_ufController, 'UF')),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: carregando ? null : () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        ElevatedButton.icon(
+          onPressed: carregando ? null : _salvar,
+          icon: const Icon(Icons.save),
+          label: Text(carregando ? 'Salvando...' : 'Salvar'),
+        ),
+      ],
+    );
+  }
+
+  TextFormField _campoObrigatorio(
+    TextEditingController controller,
+    String label,
+  ) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Campo obrigatório';
+        }
+        return null;
+      },
     );
   }
 }
