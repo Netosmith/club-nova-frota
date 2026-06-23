@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/motorista_provider.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/models/motorista_model.dart';
 import '../../shared/utils/formatters.dart';
@@ -89,6 +90,18 @@ class _PerfilContent extends StatelessWidget {
 
   final MotoristaModel motorista;
 
+  Future<void> _sair(BuildContext context) async {
+    await context.read<AuthProvider>().sair();
+
+    if (!context.mounted) return;
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.login,
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -167,6 +180,12 @@ class _PerfilContent extends StatelessWidget {
             title: const Text('Configurações'),
             subtitle: const Text('Senha, notificações e dados da conta.'),
           ),
+        ),
+        const SizedBox(height: 20),
+        OutlinedButton.icon(
+          onPressed: () => _sair(context),
+          icon: const Icon(Icons.logout),
+          label: const Text('Sair da conta'),
         ),
       ],
     );
