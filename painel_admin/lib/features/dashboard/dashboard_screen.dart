@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/admin_colors.dart';
+import '../../shared/widgets/admin_layout.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Painel Admin - Club Nova Frota')),
-      body: GridView.count(
-        padding: const EdgeInsets.all(20),
+    return const AdminLayout(
+      title: 'Dashboard',
+      child: GridView.count(
+        padding: EdgeInsets.all(20),
         crossAxisCount: 3,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        children: const [
+        children: [
           _DashboardCard(titulo: 'Motoristas', valor: '0', icone: Icons.people),
           _DashboardCard(titulo: 'Fretes', valor: '0', icone: Icons.local_shipping),
           _DashboardCard(titulo: 'Ordens', valor: '0', icone: Icons.assignment),
