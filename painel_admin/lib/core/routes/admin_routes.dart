@@ -7,6 +7,7 @@ import '../../features/dashboard/dashboard_screen.dart';
 import '../../features/fretes/fretes_screen.dart';
 import '../../features/motoristas/motoristas_screen.dart';
 import '../../features/ordens/ordens_screen.dart';
+import '../../features/ranking/ranking_screen.dart';
 
 class AdminRoutes {
   static const String login = '/login';
@@ -15,6 +16,7 @@ class AdminRoutes {
   static const String fretes = '/fretes';
   static const String ordens = '/ordens';
   static const String comprovantes = '/comprovantes';
+  static const String ranking = '/ranking';
   static const String configuracoes = '/configuracoes';
 
   static Map<String, WidgetBuilder> get routes {
@@ -25,6 +27,7 @@ class AdminRoutes {
       fretes: (_) => const FretesScreen(),
       ordens: (_) => const OrdensScreen(),
       comprovantes: (_) => const ComprovantesScreen(),
+      ranking: (_) => const RankingScreen(),
       configuracoes: (_) => const ConfiguracoesScreen(),
     };
   }
