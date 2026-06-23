@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/providers/auth_provider.dart';
+import 'core/providers/comprovantes_provider.dart';
 import 'core/providers/fretes_provider.dart';
 import 'core/providers/motorista_provider.dart';
 import 'core/providers/ordens_provider.dart';
@@ -20,6 +21,7 @@ class ClubNovaFrotaApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MotoristaProvider()),
         ChangeNotifierProvider(create: (_) => FretesProvider()),
         ChangeNotifierProvider(create: (_) => OrdensProvider()),
+        ChangeNotifierProvider(create: (_) => ComprovantesProvider()),
       ],
       child: MaterialApp(
         title: 'Club Nova Frota',
