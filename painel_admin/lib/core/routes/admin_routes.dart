@@ -14,6 +14,7 @@ import '../../features/pontos/pontos_screen.dart';
 import '../../features/ranking/ranking_screen.dart';
 import '../../features/relatorios/relatorios_screen.dart';
 import '../../features/trocas_beneficios/trocas_beneficios_screen.dart';
+import '../../features/viagens/viagens_screen.dart';
 
 class AdminRoutes {
   static const String login = '/login';
@@ -29,6 +30,7 @@ class AdminRoutes {
   static const String relatorios = '/relatorios';
   static const String avisos = '/avisos';
   static const String chamados = '/chamados';
+  static const String viagens = '/viagens';
   static const String configuracoes = '/configuracoes';
 
   static Map<String, WidgetBuilder> get routes {
@@ -46,6 +48,7 @@ class AdminRoutes {
       relatorios: (_) => const RelatoriosScreen(),
       avisos: (_) => const AvisosScreen(),
       chamados: (_) => const ChamadosScreen(),
+      viagens: (_) => const ViagensScreen(),
       configuracoes: (_) => const ConfiguracoesScreen(),
     };
   }
