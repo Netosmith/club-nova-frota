@@ -101,6 +101,11 @@ class AdminSidebar extends StatelessWidget {
               route: AdminRoutes.beneficios,
             ),
             _MenuItem(
+              icon: Icons.redeem,
+              label: 'Trocas',
+              route: AdminRoutes.trocasBeneficios,
+            ),
+            _MenuItem(
               icon: Icons.settings,
               label: 'Configurações',
               route: AdminRoutes.configuracoes,
