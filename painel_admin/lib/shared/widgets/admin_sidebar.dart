@@ -96,6 +96,11 @@ class AdminSidebar extends StatelessWidget {
               route: AdminRoutes.ranking,
             ),
             _MenuItem(
+              icon: Icons.card_giftcard,
+              label: 'Benefícios',
+              route: AdminRoutes.beneficios,
+            ),
+            _MenuItem(
               icon: Icons.settings,
               label: 'Configurações',
               route: AdminRoutes.configuracoes,
