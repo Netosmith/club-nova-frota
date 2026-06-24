@@ -5,25 +5,20 @@ import '../../core/providers/admin_viagens_provider.dart';
 import '../../core/theme/admin_colors.dart';
 import '../../shared/widgets/admin_layout.dart';
 
-class ViagensScreen extends StatefulWidget {
+class ViagensScreen extends StatelessWidget {
   const ViagensScreen({super.key});
 
   @override
-  State<ViagensScreen> createState() => _ViagensScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => AdminViagensProvider()..acompanharViagens(),
+      child: const _ViagensView(),
+    );
+  }
 }
 
-class _ViagensScreenState extends State<ViagensScreen> {
-  bool _iniciado = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (!_iniciado) {
-      context.read<AdminViagensProvider>().acompanharViagens();
-      _iniciado = true;
-    }
-  }
+class _ViagensView extends StatelessWidget {
+  const _ViagensView();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +53,7 @@ class _ViagensScreenState extends State<ViagensScreen> {
                             DataColumn(label: Text('Destino')),
                             DataColumn(label: Text('Ordem')),
                             DataColumn(label: Text('Status')),
-                            DataColumn(label: Text('Previsão')),
+                            DataColumn(label: Text('Previsao')),
                           ],
                           rows: provider.viagens.map((viagem) {
                             return DataRow(
