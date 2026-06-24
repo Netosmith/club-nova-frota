@@ -60,56 +60,17 @@ class AdminSidebar extends StatelessWidget {
                 ],
               ),
             ),
-            _MenuItem(
-              icon: Icons.dashboard,
-              label: 'Dashboard',
-              route: AdminRoutes.dashboard,
-            ),
-            _MenuItem(
-              icon: Icons.people,
-              label: 'Motoristas',
-              route: AdminRoutes.motoristas,
-            ),
-            _MenuItem(
-              icon: Icons.local_shipping,
-              label: 'Fretes',
-              route: AdminRoutes.fretes,
-            ),
-            _MenuItem(
-              icon: Icons.assignment,
-              label: 'Ordens',
-              route: AdminRoutes.ordens,
-            ),
-            _MenuItem(
-              icon: Icons.upload_file,
-              label: 'Comprovantes',
-              route: AdminRoutes.comprovantes,
-            ),
-            _MenuItem(
-              icon: Icons.stars,
-              label: 'Pontos',
-              route: AdminRoutes.pontos,
-            ),
-            _MenuItem(
-              icon: Icons.emoji_events,
-              label: 'Ranking',
-              route: AdminRoutes.ranking,
-            ),
-            _MenuItem(
-              icon: Icons.card_giftcard,
-              label: 'Benefícios',
-              route: AdminRoutes.beneficios,
-            ),
-            _MenuItem(
-              icon: Icons.redeem,
-              label: 'Trocas',
-              route: AdminRoutes.trocasBeneficios,
-            ),
-            _MenuItem(
-              icon: Icons.settings,
-              label: 'Configurações',
-              route: AdminRoutes.configuracoes,
-            ),
+            _MenuItem(icon: Icons.dashboard, label: 'Dashboard', route: AdminRoutes.dashboard),
+            _MenuItem(icon: Icons.people, label: 'Motoristas', route: AdminRoutes.motoristas),
+            _MenuItem(icon: Icons.local_shipping, label: 'Fretes', route: AdminRoutes.fretes),
+            _MenuItem(icon: Icons.assignment, label: 'Ordens', route: AdminRoutes.ordens),
+            _MenuItem(icon: Icons.upload_file, label: 'Comprovantes', route: AdminRoutes.comprovantes),
+            _MenuItem(icon: Icons.stars, label: 'Pontos', route: AdminRoutes.pontos),
+            _MenuItem(icon: Icons.emoji_events, label: 'Ranking', route: AdminRoutes.ranking),
+            _MenuItem(icon: Icons.card_giftcard, label: 'Beneficios', route: AdminRoutes.beneficios),
+            _MenuItem(icon: Icons.redeem, label: 'Trocas', route: AdminRoutes.trocasBeneficios),
+            _MenuItem(icon: Icons.bar_chart, label: 'Relatorios', route: AdminRoutes.relatorios),
+            _MenuItem(icon: Icons.settings, label: 'Configuracoes', route: AdminRoutes.configuracoes),
             const Spacer(),
             ListTile(
               leading: const Icon(Icons.logout, color: AdminColors.branco),
@@ -122,7 +83,7 @@ class AdminSidebar extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(20),
               child: Text(
-                'Nova Frota Logística',
+                'Nova Frota Logistica',
                 style: TextStyle(color: Colors.white70, fontSize: 12),
               ),
             ),
