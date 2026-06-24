@@ -10,6 +10,7 @@ import '../../features/motoristas/motoristas_screen.dart';
 import '../../features/ordens/ordens_screen.dart';
 import '../../features/pontos/pontos_screen.dart';
 import '../../features/ranking/ranking_screen.dart';
+import '../../features/trocas_beneficios/trocas_beneficios_screen.dart';
 
 class AdminRoutes {
   static const String login = '/login';
@@ -21,6 +22,7 @@ class AdminRoutes {
   static const String pontos = '/pontos';
   static const String ranking = '/ranking';
   static const String beneficios = '/beneficios';
+  static const String trocasBeneficios = '/trocas-beneficios';
   static const String configuracoes = '/configuracoes';
 
   static Map<String, WidgetBuilder> get routes {
@@ -34,6 +36,7 @@ class AdminRoutes {
       pontos: (_) => const PontosScreen(),
       ranking: (_) => const RankingScreen(),
       beneficios: (_) => const BeneficiosScreen(),
+      trocasBeneficios: (_) => const TrocasBeneficiosScreen(),
       configuracoes: (_) => const ConfiguracoesScreen(),
     };
   }
