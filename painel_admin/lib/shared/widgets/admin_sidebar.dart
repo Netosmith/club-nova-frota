@@ -70,6 +70,7 @@ class AdminSidebar extends StatelessWidget {
             _MenuItem(icon: Icons.card_giftcard, label: 'Beneficios', route: AdminRoutes.beneficios),
             _MenuItem(icon: Icons.redeem, label: 'Trocas', route: AdminRoutes.trocasBeneficios),
             _MenuItem(icon: Icons.bar_chart, label: 'Relatorios', route: AdminRoutes.relatorios),
+            _MenuItem(icon: Icons.campaign, label: 'Avisos', route: AdminRoutes.avisos),
             _MenuItem(icon: Icons.settings, label: 'Configuracoes', route: AdminRoutes.configuracoes),
             const Spacer(),
             ListTile(
