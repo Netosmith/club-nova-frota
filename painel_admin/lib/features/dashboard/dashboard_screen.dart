@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/providers/admin_beneficios_provider.dart';
 import '../../core/providers/admin_comprovantes_provider.dart';
 import '../../core/providers/admin_fretes_provider.dart';
 import '../../core/providers/admin_motoristas_provider.dart';
 import '../../core/providers/admin_ordens_provider.dart';
+import '../../core/providers/admin_pontos_provider.dart';
+import '../../core/providers/admin_ranking_provider.dart';
 import '../../core/theme/admin_colors.dart';
 import '../../shared/widgets/admin_layout.dart';
 
@@ -27,6 +30,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context.read<AdminFretesProvider>().acompanharFretes();
       context.read<AdminOrdensProvider>().acompanharOrdens();
       context.read<AdminComprovantesProvider>().acompanharComprovantes();
+      context.read<AdminPontosProvider>().acompanharPontos();
+      context.read<AdminRankingProvider>().acompanharRanking();
+      context.read<AdminBeneficiosProvider>().acompanharBeneficios();
       _iniciado = true;
     }
   }
@@ -37,6 +43,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final fretesProvider = context.watch<AdminFretesProvider>();
     final ordensProvider = context.watch<AdminOrdensProvider>();
     final comprovantesProvider = context.watch<AdminComprovantesProvider>();
+    final pontosProvider = context.watch<AdminPontosProvider>();
+    final rankingProvider = context.watch<AdminRankingProvider>();
+    final beneficiosProvider = context.watch<AdminBeneficiosProvider>();
 
     final motoristasAtivos = motoristasProvider.motoristas
         .where((motorista) => motorista.ativo)
@@ -55,7 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       title: 'Dashboard',
       child: GridView.count(
         padding: const EdgeInsets.all(20),
-        crossAxisCount: 3,
+        crossAxisCount: 4,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         children: [
@@ -70,7 +79,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icone: Icons.verified_user,
           ),
           _DashboardCard(
-            titulo: 'Fretes disponíveis',
+            titulo: 'Fretes disponiveis',
             valor: '$fretesDisponiveis',
             icone: Icons.local_shipping,
           ),
@@ -88,6 +97,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
             titulo: 'Total de ordens',
             valor: '${ordensProvider.ordens.length}',
             icone: Icons.list_alt,
+          ),
+          _DashboardCard(
+            titulo: 'Pontos distribuidos',
+            valor: '${pontosProvider.creditosTotais}',
+            icone: Icons.stars,
+          ),
+          _DashboardCard(
+            titulo: 'Top ranking',
+            valor: '${rankingProvider.ranking.length}',
+            icone: Icons.emoji_events,
+          ),
+          _DashboardCard(
+            titulo: 'Beneficios ativos',
+            valor: '${beneficiosProvider.beneficiosAtivos}',
+            icone: Icons.card_giftcard,
+          ),
+          _DashboardCard(
+            titulo: 'Estoque beneficios',
+            valor: '${beneficiosProvider.estoqueTotal}',
+            icone: Icons.inventory_2,
           ),
         ],
       ),
