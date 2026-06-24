@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../features/auth/admin_login_screen.dart';
+import '../../features/beneficios/beneficios_screen.dart';
 import '../../features/comprovantes/comprovantes_screen.dart';
 import '../../features/configuracoes/configuracoes_screen.dart';
 import '../../features/dashboard/dashboard_screen.dart';
@@ -19,6 +20,7 @@ class AdminRoutes {
   static const String comprovantes = '/comprovantes';
   static const String pontos = '/pontos';
   static const String ranking = '/ranking';
+  static const String beneficios = '/beneficios';
   static const String configuracoes = '/configuracoes';
 
   static Map<String, WidgetBuilder> get routes {
@@ -31,6 +33,7 @@ class AdminRoutes {
       comprovantes: (_) => const ComprovantesScreen(),
       pontos: (_) => const PontosScreen(),
       ranking: (_) => const RankingScreen(),
+      beneficios: (_) => const BeneficiosScreen(),
       configuracoes: (_) => const ConfiguracoesScreen(),
     };
   }
