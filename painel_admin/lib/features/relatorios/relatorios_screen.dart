@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/services/admin_beneficios_service.dart';
+import '../../core/services/admin_chamados_service.dart';
 import '../../core/services/admin_comprovantes_service.dart';
 import '../../core/services/admin_fretes_service.dart';
 import '../../core/services/admin_motoristas_service.dart';
@@ -8,6 +9,7 @@ import '../../core/services/admin_ordens_service.dart';
 import '../../core/services/admin_pedidos_beneficios_service.dart';
 import '../../core/services/admin_pontos_service.dart';
 import '../../core/services/admin_ranking_service.dart';
+import '../../core/services/admin_viagens_service.dart';
 import '../../core/theme/admin_colors.dart';
 import '../../shared/widgets/admin_layout.dart';
 
@@ -24,6 +26,8 @@ class RelatoriosScreen extends StatelessWidget {
     final rankingService = AdminRankingService();
     final beneficiosService = AdminBeneficiosService();
     final pedidosService = AdminPedidosBeneficiosService();
+    final chamadosService = AdminChamadosService();
+    final viagensService = AdminViagensService();
 
     return AdminLayout(
       title: 'Relatórios',
@@ -94,6 +98,16 @@ class RelatoriosScreen extends StatelessWidget {
                     titulo: 'Trocas',
                     icone: Icons.redeem,
                     stream: pedidosService.listarPedidos().map((lista) => lista.length),
+                  ),
+                  _ContadorCard(
+                    titulo: 'Chamados',
+                    icone: Icons.support_agent,
+                    stream: chamadosService.listarChamados().map((lista) => lista.length),
+                  ),
+                  _ContadorCard(
+                    titulo: 'Viagens',
+                    icone: Icons.route,
+                    stream: viagensService.listarViagens().map((lista) => lista.length),
                   ),
                 ],
               ),
