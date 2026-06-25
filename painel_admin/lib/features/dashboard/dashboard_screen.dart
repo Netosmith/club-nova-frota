@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/providers/admin_beneficios_provider.dart';
+import '../../core/providers/admin_chamados_provider.dart';
 import '../../core/providers/admin_comprovantes_provider.dart';
 import '../../core/providers/admin_fretes_provider.dart';
 import '../../core/providers/admin_motoristas_provider.dart';
@@ -33,6 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context.read<AdminPontosProvider>().acompanharPontos();
       context.read<AdminRankingProvider>().acompanharRanking();
       context.read<AdminBeneficiosProvider>().acompanharBeneficios();
+      context.read<AdminChamadosProvider>().acompanharChamados();
       _iniciado = true;
     }
   }
@@ -46,6 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final pontosProvider = context.watch<AdminPontosProvider>();
     final rankingProvider = context.watch<AdminRankingProvider>();
     final beneficiosProvider = context.watch<AdminBeneficiosProvider>();
+    final chamadosProvider = context.watch<AdminChamadosProvider>();
 
     final motoristasAtivos = motoristasProvider.motoristas
         .where((motorista) => motorista.ativo)
@@ -117,6 +120,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
             titulo: 'Estoque beneficios',
             valor: '${beneficiosProvider.estoqueTotal}',
             icone: Icons.inventory_2,
+          ),
+          _DashboardCard(
+            titulo: 'Chamados abertos',
+            valor: '${chamadosProvider.abertos}',
+            icone: Icons.support_agent,
+          ),
+          _DashboardCard(
+            titulo: 'Chamados em atendimento',
+            valor: '${chamadosProvider.emAtendimento}',
+            icone: Icons.pending_actions,
           ),
         ],
       ),
